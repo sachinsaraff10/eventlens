@@ -1,6 +1,5 @@
-version: "3.8"
-
 services:
+
   postgres:
     image: postgres:16
     environment:
@@ -18,30 +17,26 @@ services:
       - "6380:6379"
 
   api:
-    build: 
-      context: .
-      dockerfile: ./api/Dockerfile
+    build: ./api
     command: node server.js
     env_file: .env
     ports:
       - "4000:4000"
+    volumes:
+      - ./api:/app
+      - ./db:/app/db
     depends_on:
       - postgres
       - redis
-
-  # worker:
-  #   build: ./worker
-  #   command: node worker.js
-  #   env_file: .env
-  #   depends_on:
-  #     - postgres
-  #     - redis
 
   ui:
     build: ./ui
     command: npm run dev -- --host
     ports:
       - "5173:5173"
+    volumes:
+      - ./ui:/app
+      - /app/node_modules
     depends_on:
       - api
 

@@ -7,7 +7,11 @@ export async function listEvents(req, res) {
         id,
         kind,
         source,
-        occurred_at
+        occurred_at,
+        payload->>'method' AS method,
+        payload->>'path' AS path,
+        payload->>'status' AS status,
+        payload->>'duration_ms' AS duration
         
       FROM events_raw
       ORDER BY occurred_at DESC

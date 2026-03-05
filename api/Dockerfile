@@ -2,10 +2,15 @@ FROM node:20
 
 WORKDIR /app
 
-COPY package.json package-lock.json ./
+# Copy only API package files first (for caching)
+COPY api/package.json api/package-lock.json ./
 RUN npm install
 
-COPY . .
+# Copy API source
+COPY api/ ./
+
+# Copy migrations
+COPY db/ ./db
 
 EXPOSE 4000
 

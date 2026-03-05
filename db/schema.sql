@@ -1,42 +1,18 @@
--- =========================
--- Raw immutable events
--- =========================
-
 CREATE TABLE IF NOT EXISTS events_raw (
   id UUID PRIMARY KEY,
-  event_type TEXT NOT NULL,
-  source TEXT NOT NULL,
-  trace_id UUID,
 
-  actor JSONB,
-  subject JSONB,
+  kind TEXT NOT NULL,              -- http.request, job.run, error, db.query
+  name TEXT,                       -- optional semantic label (route, job name)
 
-  payload JSONB NOT NULL,
+  source TEXT NOT NULL,            -- service name
+  trace_id UUID,                   -- correlation root
+  parent_id UUID,                  -- causal parent (optional)
 
-  occurred_at TIMESTAMP NOT NULL,
-  received_at TIMESTAMP NOT NULL DEFAULT now(),
+  severity TEXT,                   -- info | warning | error
 
-  status TEXT NOT NULL
-);
-
--- =========================
--- Processed / interpreted events
--- =========================
-
-CREATE TABLE IF NOT EXISTS events_processed (
-  event_id UUID PRIMARY KEY REFERENCES events_raw(id),
-
-  event_type TEXT NOT NULL,
-  source TEXT NOT NULL,
-  trace_id UUID,
-
-  actor JSONB,
-  subject JSONB,
+  payload JSONB NOT NULL,          -- raw observed data
+  -- meta JSONB,                      -- headers, timings, env, etc
 
   occurred_at TIMESTAMP NOT NULL,
-
-  processed_payload JSONB NOT NULL,
-
-  processor_version INTEGER NOT NULL,
-  processed_at TIMESTAMP NOT NULL DEFAULT now()
+  received_at TIMESTAMP NOT NULL DEFAULT now()
 );

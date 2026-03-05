@@ -7,21 +7,22 @@ export async function ingest(req, res) {
   await db.query(
     `
     INSERT INTO events_raw (
-      id, event_type, source, trace_id,
-      actor, subject, payload,
-      occurred_at, status
+      id, kind, source, trace_id,
+      parent_id,severity , meta,
+      occurred_at, received_at
     )
     VALUES ($1,$2,$3,$4,$5,$6,$7,$8,'pending')
     `,
     [
       event.id,
-      event.event_type,
+      event.kind,
       event.source,
       event.trace_id,
-      event.actor,
-      event.subject,
-      event.payload,
-      event.occurred_at
+      event.parent_id,
+      event.severity,
+      event.meta,
+      event.occurred_at,
+      event.received_at
     ]
   );
 
